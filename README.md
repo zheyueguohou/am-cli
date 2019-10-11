@@ -6,10 +6,10 @@ am-cli
 
 ## 发布
 >* npm adduser
- * npm publish
+>* npm publish
 
 ## 安装
 >* npm install am-cli -g
- * am init test
+>* am init test
 
 
