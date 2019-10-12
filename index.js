@@ -31,7 +31,8 @@ function failFunc(spinner, err) {
     console.log(symbols.error, chalk.red(err));
 }
 
-program.version('1.0.4', '-v, --version')
+//输入ssh或者http选择下载模式
+program.version('1.0.6', '-v, --version')
     .command('init <name>')
     .action((name) => {
         if (!fs.existsSync(name)) {
@@ -42,22 +43,21 @@ program.version('1.0.4', '-v, --version')
                 {
                     name: 'author',
                     message: '请输入作者名称'
+                },
+                {
+                    name: 'module',
+                    message: '请选择模式http(默认/yes)或ssh(no):'
                 }
             ]).then((answers) => {
                 const spinner = ora('正在下载模板...');
                 spinner.start();
-                download('https://github.com:zheyueguohou/am-cli-template#master', name, { clone: true }, (err) => {
+                let gitUrl = 'https://github.com:zheyueguohou/am-cli-template#master';
+                if (answers.module === 'no') {
+                    gitUrl = 'github.com:zheyueguohou/am-cli-template#master';
+                }
+                download(gitUrl, name, { clone: true }, (err) => {
                     if (err) {
-                        spinner.color = 'yellow';
-                        spinner.text = '切换ssh方式下载';
-			// 默认为 git@github.com:zheyueguohou/am-cli.git
-                        download('github.com:zheyueguohou/am-cli-template#master', name, { clone: true }, (err) => {
-                            if (err) {
-                                failFunc(spinner, err);
-                            } else {
-                                successFunc(spinner, name, answers);
-                            }
-                        });
+                        failFunc(spinner, err);
                     } else {
                         successFunc(spinner, name, answers);
                     }
